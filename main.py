@@ -5,10 +5,10 @@ import subprocess as sp
 engine = pt.init()
 
 rate = engine.getProperty('rate')
-engine.setProperty('rate', rate-100)  
+engine.setProperty('rate', rate-150)  
 engine.setProperty('volume', 1)  
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)
+engine.setProperty('voice', voices[32].id)
 
 engine.say("hello pratyush.")
 engine.runAndWait()
@@ -38,6 +38,20 @@ with sr.Microphone() as source:
                 sp.run(["kitty"])
             elif text.lower()=="open browser":
                 sp.run(["firefox"])
+            elif text.lower()=="open calculator":
+                sp.Popen(["gnome-calculator"])
+            elif text.lower()=="close calculator":
+                sp.run(["pkill","gnome-calculato"])
+            elif "add" in text.lower():
+                t=text.lower().split(" ")
+                total=0
+                for i in t:
+                    if i.isdigit():
+                        total+=int(i)
+                res=f"sum is {total}"
+                print(res)
+                engine.say(res)
+                engine.runAndWait()
 
         except sr.WaitTimeoutError:
             print("Listening timed out. No speech detected.")
