@@ -1,17 +1,23 @@
-import pyttsx3 as pt
 import speech_recognition as sr
 import subprocess as sp
+import asyncio as asc
+import edge_tts as edt
 
-engine = pt.init()
 
-rate = engine.getProperty('rate')
-engine.setProperty('rate', rate-150)  
-engine.setProperty('volume', 1)  
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[32].id)
+def speak(txt):
+    print(txt)
+    asc.run(say(txt))
 
-engine.say("hello pratyush.")
-engine.runAndWait()
+
+VOICE="en-US-AvaNeural"
+OUTPUT_FILE="output.mp3"
+
+async def say(txt):
+    communicate = edt.Communicate(txt,VOICE)
+    await communicate.save(OUTPUT_FILE)
+    sp.run(["mpg123","output.mp3"])
+
+speak("hello pratyush")
 
 recognizer = sr.Recognizer()
 
@@ -29,11 +35,9 @@ with sr.Microphone() as source:
             text=recognizer.recognize_google(audioData)
             print(f"u said: {text}")
             if "how are you" in text.lower():
-                engine.say("I am running good")
-                engine.runAndWait()
+                speak("I am running good")
             elif "this is cool" in text.lower():
-                engine.say("I know right")
-                engine.runAndWait()
+                speak("I know right")
             elif text.lower()=="open terminal":
                 sp.run(["kitty"])
             elif text.lower()=="open browser":
@@ -49,10 +53,7 @@ with sr.Microphone() as source:
                     if i.isdigit():
                         total+=int(i)
                 res=f"sum is {total}"
-                print(res)
-                engine.say(res)
-                engine.runAndWait()
-
+                speak(res)
         except sr.WaitTimeoutError:
             print("Listening timed out. No speech detected.")
         except sr.UnknownValueError:
@@ -61,5 +62,4 @@ with sr.Microphone() as source:
             print(f"Could not request results from Google service; {e}")
             break
 
-engine.say("goodbye")
-engine.runAndWait()
+speak("goodbye")
